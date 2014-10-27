@@ -13,5 +13,8 @@ namespace ConversioTest;
  */
 class ConversionTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
 
+    }
 }
