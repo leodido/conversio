@@ -40,6 +40,7 @@ class Conversion extends AbstractFilter
         if ($params instanceof Traversable) {
             $params = ArrayUtils::iteratorToArray($params);
         }
+        // FIXME: use a switch statement
         if (is_string($params)) {
             $this->setAdapter($params);
         } elseif ($params instanceof ConversionAlgorithmInterface) {
@@ -55,6 +56,7 @@ class Conversion extends AbstractFilter
      * @param  string|ConversionAlgorithmInterface $adapter Adapter to use
      * @return $this
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function setAdapter($adapter)
     {
@@ -178,7 +180,7 @@ class Conversion extends AbstractFilter
     }
 
     /**
-     * Get individual or all options from underlying adapter
+     * Get individual or all options from underlying adapter options object
      *
      * @param  string|null $option
      * @return array|mixed|null

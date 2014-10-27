@@ -15,11 +15,6 @@ use Conversio\Conversion;
  */
 class ConversionTest extends \PHPUnit_Framework_TestCase
 {
-
-    public function setUp()
-    {
-    }
-
     public function testConstructor()
     {
         $classname = 'Conversio\Conversion';
@@ -61,7 +56,52 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo($input));
 
         $ctor->invoke($mock, $input);
+
+        // null input
+        $input = null;
+        $mock->expects($this->never())
+            ->method('setAdapter')
+            ->with($this->equalTo($input));
+        $mock->expects($this->never())
+            ->method('setOptions')
+            ->with($this->equalTo($input));
+
+        $ctor->invoke($mock, $input);
     }
 
-}
+    public function testSetInvalidTypeAdapter()
+    {
+        $filter = new Conversion();
+        $this->setExpectedException('Conversio\Exception\InvalidArgumentException');
+        $filter->setAdapter(new \stdClass());
+    }
 
+    public function testSetNonExistentAdapter()
+    {
+        $filter = new Conversion();
+        $this->setExpectedException('Conversio\Exception\RuntimeException');
+        $filter->setAdapter('Conversio\Phantom\NonExistentAdapter');
+    }
+
+    public function testSetInvalidAdapter()
+    {
+        $filter = new Conversion();
+        $this->setExpectedException('Conversio\Exception\InvalidArgumentException');
+        $filter->setAdapter('\ArrayIterator');
+    }
+
+    public function testSetAdapter()
+    {
+        $adapterClassName = 'ConversioTest\TestAsset\ConvertNothing';
+        $filter = new Conversion();
+
+        // string param
+        $filter->setAdapter($adapterClassName);
+        $this->assertInstanceOf($adapterClassName, $filter->getAdapter());
+
+        // instance param
+        $adapterInstance = new $adapterClassName();
+        $filter->setAdapter($adapterInstance);
+        $this->assertInstanceOf($adapterClassName, $filter->getAdapter());
+    }
+}
