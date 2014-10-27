@@ -3,6 +3,8 @@ Conversio
 
 Conversio is a PHP library that provides a simple infrastructure to create your own converters and to perform any conversion.
 
+**WIP**
+
 Installation
 ------------
 
@@ -19,7 +21,7 @@ Add `leodido/conversio` to your `composer.json`.
 Usage
 -----
 
-...
+**WIP**
 
 ---
 
