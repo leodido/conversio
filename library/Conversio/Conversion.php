@@ -40,13 +40,16 @@ class Conversion extends AbstractFilter
         if ($params instanceof Traversable) {
             $params = ArrayUtils::iteratorToArray($params);
         }
-        // FIXME: use a switch statement
-        if (is_string($params)) {
-            $this->setAdapter($params);
-        } elseif ($params instanceof ConversionAlgorithmInterface) {
-            $this->setAdapter($params);
-        } elseif (is_array($params)) {
-            $this->setOptions($params);
+        switch(true) {
+            case is_string($params):
+            case $params instanceof ConversionAlgorithmInterface:
+                $this->setAdapter($params);
+                break;
+            case is_array($params):
+                $this->setOptions($params);
+                break;
+            default:
+                break;
         }
     }
 
@@ -94,9 +97,16 @@ class Conversion extends AbstractFilter
      * Returns the current adapter
      *
      * @return ConversionAlgorithmInterface
+     * @throws Exception\RuntimeException
      */
     public function getAdapter()
     {
+        if (!$this->adapter) {
+            throw new Exception\RuntimeException(sprintf(
+                '"%s" unable to load adapter; adapter not found',
+                __METHOD__
+            ));
+        }
         return $this->adapter;
     }
 
