@@ -176,4 +176,19 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('Conversio\Exception\RuntimeException');
         new Conversion($onlyOpts);
     }
+
+//    public function testSettingAdapterOptionsShouldThrowDomainExceptionWhenAdapterOptionsClassDoesNotExists()
+//    {
+//
+//    }
+//
+//    public function testSettingAdapterOptionsShouldThrowDomainExceptionWhenAdapterOptionsClassIsNotAnAbstractOptions()
+//    {
+//
+//    }
+//
+//    public function testSetAdapterOptions()
+//    {
+//
+//    }
 }

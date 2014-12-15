@@ -1,9 +1,9 @@
 Conversio
 =========
 
-Conversio is a PHP library that provides a simple infrastructure to create your own converters and to perform any conversion.
+[![Latest Stable Version](https://poser.pugx.org/leodido/conversio/v/stable.png)](https://packagist.org/packages/leodido/conversio) [![Build Status](https://travis-ci.org/leodido/conversio.png?branch=master)](https://travis-ci.org/leodido/conversio)
 
-**WIP**
+Conversio is a PHP library that provides a simple infrastructure to create your own converters and to perform any conversion.
 
 Installation
 ------------
