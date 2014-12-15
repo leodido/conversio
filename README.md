@@ -1,7 +1,7 @@
 Conversio
 =========
 
-[![Latest Stable Version](https://poser.pugx.org/leodido/conversio/v/stable.png)](https://packagist.org/packages/leodido/conversio) [![Build Status](https://travis-ci.org/leodido/conversio.png?branch=master)](https://travis-ci.org/leodido/conversio)
+[![Latest Stable Version](https://poser.pugx.org/leodido/conversio/v/stable.png)](https://packagist.org/packages/leodido/conversio) [![Build Status](https://travis-ci.org/leodido/conversio.png?branch=master)](https://travis-ci.org/leodido/conversio) [![Coverage Status](https://coveralls.io/repos/leodido/conversio/badge.png?branch=master)](https://coveralls.io/r/leodido/conversio)
 
 Conversio is a PHP library that provides a simple infrastructure to create your own converters and to perform any conversion.
 
