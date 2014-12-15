@@ -157,7 +157,13 @@ class Conversion extends AbstractFilter
      */
     public function setAdapterOptions($options)
     {
-        $optClass = $this->getAdapter()->getName() . 'Options';
+        // Retrieve adapter namespace
+        $adapter = $this->getAdapter();
+        $adapterClass = get_class($adapter);
+        $namespace = substr($adapterClass, 0, strrpos($adapterClass, '\\'));
+        // Build full qualified option class name
+        $optClass = $namespace . '\\Options\\' . $adapter->getName() . 'Options';
+        // Does the option class exist?
         if (!class_exists($optClass)) {
             throw new Exception\DomainException(sprintf(
                 '"%s" expects that an options class for the current adapter exists; received "%s"',
