@@ -18,8 +18,6 @@ Add `leodido/conversio` to your `composer.json`.
 }
 ```
 
-At the moment only the **dev-develop** version is published.
-
 Usage
 -----
 
