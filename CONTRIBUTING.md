@@ -1,6 +1,6 @@
 # Contributing
 
-Contributions to Conversio library are always welcomed and encouraged.
+Contributions to **Conversio** library are always welcomed and encouraged.
 
 You make our lives easier by sending us your contributions through github pull requests.
 
