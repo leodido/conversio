@@ -9,6 +9,8 @@
 namespace ConversioTest;
 
 use Conversio\Conversion;
+use ConversioTest\TestAsset\FakeAdapter;
+use ConversioTest\TestAsset\Options\FakeAdapterOptions;
 
 /**
  * Class ConversionTest
@@ -39,6 +41,7 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
 
         $class = new \ReflectionClass(self::CLASSNAME);
         $ctor = $class->getConstructor();
+
         $ctor->invoke($this->mock, $input);
 
         // traversable input
@@ -77,21 +80,21 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $ctor->invoke($this->mock, $input);
     }
 
-    public function testGettingAdapterNotSetShouldThrowRuntimeException()
+    public function testGetAdapterNotSetShouldThrowRuntimeException()
     {
         $filter = new Conversion();
         $this->setExpectedException('Conversio\Exception\RuntimeException');
         $filter->getAdapter();
     }
 
-    public function testSettingInvalidTypeAdapterShouldThrowInvalidArgumentException()
+    public function testSetInvalidTypeAdapterShouldThrowInvalidArgumentException()
     {
         $filter = new Conversion();
         $this->setExpectedException('Conversio\Exception\InvalidArgumentException');
         $filter->setAdapter(new \stdClass());
     }
 
-    public function testSettingNonExistentAdapterShouldThrowRuntimeException()
+    public function testSetNonExistentAdapterShouldThrowRuntimeException()
     {
         $filter = new Conversion();
         $this->setExpectedException('Conversio\Exception\RuntimeException');
@@ -101,7 +104,7 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $filter->getAdapter();
     }
 
-    public function testSettingInvalidAdapterShouldThrowInvalidArgumentException()
+    public function testSetInvalidAdapterClassShouldThrowInvalidArgumentException()
     {
         $filter = new Conversion();
         $this->setExpectedException('Conversio\Exception\InvalidArgumentException');
@@ -129,7 +132,7 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($adapterInstance->getName(), $filter->getAdapterName());
     }
 
-    public function testSettingInvalidOptionsShouldThrowInvalidArgumentException()
+    public function testSetInvalidTypeOptionsShouldThrowInvalidArgumentException()
     {
         $filter = new Conversion();
         $this->setExpectedException('Conversio\Exception\InvalidArgumentException');
@@ -138,7 +141,6 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
 
     public function testSetOptions()
     {
-        // NOTE: here we test the correct call sequence, not the integrity that is demanded to other test
         $onlyOpts = [
             'options' => ['prop1' => 1, 'prop2' => 2]
         ];
@@ -146,14 +148,14 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $this->mock->expects($this->at(0))
             ->method('setAdapterOptions')
             ->with($this->equalTo($onlyOpts['options']));
-
         $class = new \ReflectionClass(self::CLASSNAME);
         $setOptsMethod = $class->getMethod('setOptions');
+
         $setOptsMethod->invoke($this->mock, $onlyOpts);
 
         $opts = [
             'adapter' => 'ConversioTest\TestAsset\ConvertNothing',
-            'options' => ['prop1' => 1, 'prop2' => 2]
+            'options' => ['prop1' => 1, 'prop2' => 2],
         ];
 
         $this->mock->expects($this->at(0))
@@ -162,33 +164,165 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $this->mock->expects($this->at(1))
             ->method('setAdapterOptions')
             ->with($this->equalTo($opts['options']));
-
         $class = new \ReflectionClass(self::CLASSNAME);
         $setOptsMethod = $class->getMethod('setOptions');
+
+        $setOptsMethod->invoke($this->mock, $opts);
+
+        $opts = [
+            'options' => ['prop1' => 1, 'prop2' => 2],
+            'adapter' => 'ConversioTest\TestAsset\ConvertNothing',
+        ];
+
+        $this->mock->expects($this->at(0))
+            ->method('setAdapterOptions')
+            ->with($this->equalTo($opts['options']));
+        $this->mock->expects($this->at(1))
+            ->method('setAdapter')
+            ->with($this->equalTo($opts['adapter']));
+        $class = new \ReflectionClass(self::CLASSNAME);
+        $setOptsMethod = $class->getMethod('setOptions');
+
         $setOptsMethod->invoke($this->mock, $opts);
     }
 
-    public function testSettingAdapterOptionsWithoutAdapterShouldThrowRuntimeException()
+    public function testGetAdapterOptionsWhenAdapterHasNotBeenSpecifiedShouldThrowRuntimeException()
     {
         $onlyOpts = [
-            'options' => ['prop1' => 1, 'prop2' => 2]
+            'options' => ['opt1' => 'O1', 'opt2' => 'O2'],
         ];
+        $filter = new Conversion($onlyOpts);
         $this->setExpectedException('Conversio\Exception\RuntimeException');
-        new Conversion($onlyOpts);
+        $filter->getAdapterOptions();
     }
 
-//    public function testSettingAdapterOptionsShouldThrowDomainExceptionWhenAdapterOptionsClassDoesNotExists()
-//    {
-//
-//    }
-//
-//    public function testSettingAdapterOptionsShouldThrowDomainExceptionWhenAdapterOptionsClassIsNotAnAbstractOptions()
-//    {
-//
-//    }
-//
-//    public function testSetAdapterOptions()
-//    {
-//
-//    }
+    public function testGetAdapterOptionsWhenAdapterAbstractOptionsClassDoesNotExistShouldThrowDomainException()
+    {
+        $onlyOpts = [
+            'options' => ['opt1' => 'O1', 'opt2' => 'O2'],
+            'adapter' => 'ConversioTest\TestAsset\ConvertNothing',
+        ];
+        $filter = new Conversion($onlyOpts);
+        $this->setExpectedException(
+            'Conversio\Exception\DomainException',
+            sprintf(
+                '%s::getAbstractOptions" expects that an options class ("%s") for the current adapter exists',
+                self::CLASSNAME,
+                'ConversioTest\TestAsset\Options\ConvertNothingOptions'
+            )
+        );
+        $filter->getAdapterOptions();
+    }
+
+    public function testGetAdapterOptionsWhenAdapterOptionsAreNotAbstractOptionsShouldThrowDomainException()
+    {
+        $onlyOpts = [
+            'options' => ['opt1' => 'O1', 'opt2' => 'O2'],
+            'adapter' => 'ConversioTest\TestAsset\WrongAdapter',
+        ];
+        $filter = new Conversion($onlyOpts);
+        $this->setExpectedException(
+            'Conversio\Exception\DomainException',
+            sprintf(
+                '%s::getAbstractOptions" expects the options class to resolve to a valid "%s" instance; received "%s"',
+                self::CLASSNAME,
+                'Zend\Stdlib\AbstractOptions',
+                'ConversioTest\TestAsset\Options\WrongAdapterOptions'
+            )
+        );
+        $filter->getAdapterOptions();
+    }
+
+    public function testGetAdapterOptionsWhenNotMachingAdapterOptionsWasSetShouldThrowDomainException()
+    {
+        /** @var $mockOptions \Zend\Stdlib\AbstractOptions */
+        $mockOptions = $this->getMockForAbstractClass('\Zend\Stdlib\AbstractOptions');
+        $filter = new Conversion();
+        $filter->setAdapter(new FakeAdapter());
+        $filter->setAdapterOptions($mockOptions);
+        $this->setExpectedException('Conversio\Exception\DomainException');
+        $filter->getAdapterOptions();
+    }
+
+    public function testGetAdapterOptionsAndOptions()
+    {
+        $fakeAdapterOpts = new FakeAdapterOptions();
+        $filter = new Conversion();
+        $filter->setAdapter(new FakeAdapter());
+        $filter->setAdapterOptions($fakeAdapterOpts);
+        $this->assertInstanceOf(get_class($fakeAdapterOpts), $filter->getAdapterOptions());
+        $this->assertEquals($fakeAdapterOpts, $filter->getAdapterOptions());
+        $this->assertEquals($fakeAdapterOpts->toArray(), $filter->getOptions());
+
+        $params = [
+            'adapterOptions' => ['fake' => 'fake'],
+            'adapter' => 'ConversioTest\TestAsset\FakeAdapter',
+        ];
+        $filter = new Conversion($params);
+        $this->assertInstanceOf(get_class($fakeAdapterOpts), $filter->getAdapterOptions());
+        $this->assertEquals(new FakeAdapterOptions($params['adapterOptions']), $filter->getAdapterOptions());
+        $this->assertEquals($params['adapterOptions'], $filter->getOptions());
+
+
+        $filter = new Conversion();
+        $filter->setAdapter(new FakeAdapter());
+        $this->assertEmpty($filter->getOptions());
+        $this->assertEquals($fakeAdapterOpts, $filter->getAdapterOptions());
+        $this->assertEquals($fakeAdapterOpts->toArray(), $filter->getOptions());
+    }
+
+    public function testSetAdapterOptionsWithInvalidTypeInputShouldThrowInvalidArgumentException()
+    {
+        $filter = new Conversion();
+        $this->setExpectedException(
+            'Conversio\Exception\InvalidArgumentException',
+            sprintf(
+                '"%s::setAdapterOptions" expects an array or a valid instance of "%s"; received "%s"',
+                self::CLASSNAME,
+                'Zend\Stdlib\AbstractOptions',
+                'string'
+            )
+        );
+        $filter->setAdapterOptions('invalid');
+    }
+
+    public function testFilterNotString()
+    {
+        $notAString = [];
+        $filter = new Conversion();
+        $this->assertEquals($notAString, $filter->filter($notAString));
+    }
+
+    public function testFilter()
+    {
+        $input = 'string';
+
+        $adapterMock = $this->getMock('Conversio\ConversionAlgorithmInterface');
+
+        $this->mock->expects($this->at(0))
+                   ->method('getAdapter')
+                   ->willReturn($adapterMock);
+
+        $adapterMock->expects($this->at(0))
+                    ->method('convert')
+                    ->with($this->equalTo($input));
+
+        $class = new \ReflectionClass(self::CLASSNAME);
+        $filterMethod = $class->getMethod('filter');
+        $filterMethod->invoke($this->mock, $input);
+    }
+
+
+    public function testGetAdapterThatHaveOptions()
+    {
+        $adapterOpts = new FakeAdapterOptions(['fake' => 'ABC']);
+        $adapter = new FakeAdapter();
+
+        $filter = new Conversion();
+        $filter->setAdapter($adapter);
+        $filter->setAdapterOptions($adapterOpts);
+
+        $this->assertSame($adapter, $filter->getAdapter());
+        $this->assertSame($adapterOpts, $adapter->getOptions());
+    }
 }
