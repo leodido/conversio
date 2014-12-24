@@ -11,7 +11,6 @@ namespace Conversio\Adapter\Options;
 use Conversio\Exception;
 use Zend\Stdlib\AbstractOptions;
 use Zend\Stdlib\ArrayUtils;
-use Zend\Stdlib\StringUtils;
 
 /**
  * Class AbstractOptionsMap
