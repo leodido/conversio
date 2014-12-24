@@ -155,11 +155,12 @@ class Conversion extends AbstractFilter
             $this->adapterOptions = $optClass->setFromArray($this->adapterOptions);
             return $this->adapterOptions;
         }
-        if (get_class($this->adapterOptions) !== $this->getAbstractOptionsFullQualifiedClassName()) {
+        $wantedOptionsClass = self::getAbstractOptionsFullQualifiedClassName($this->adapter);
+        if (get_class($this->adapterOptions) !== $wantedOptionsClass) {
             throw new Exception\DomainException(sprintf(
                 '"%s" expects that options set are an array or a valid "%s" instance; received "%s"',
                 __METHOD__,
-                $this->getAbstractOptionsFullQualifiedClassName(),
+                $wantedOptionsClass,
                 get_class($this->adapterOptions)
             ));
         }
@@ -173,7 +174,7 @@ class Conversion extends AbstractFilter
      */
     protected function getAbstractOptions()
     {
-        $optClass = $this->getAbstractOptionsFullQualifiedClassName();
+        $optClass = self::getAbstractOptionsFullQualifiedClassName($this->adapter);
         // Does the option class exist?
         if (!class_exists($optClass)) {
             throw new Exception\DomainException(
@@ -196,24 +197,6 @@ class Conversion extends AbstractFilter
             );
         }
         return $opts;
-    }
-
-    /**
-     * TODO: Docs
-     * @return string
-     * @throws Exception\RuntimeException
-     */
-    protected function getAbstractOptionsFullQualifiedClassName()
-    {
-        if (!$this->adapter) {
-            throw new Exception\RuntimeException(sprintf(
-                '"%s" unable to load adapter; adapter not found',
-                __METHOD__
-            ));
-        }
-        $adapterClass = get_class($this->adapter);
-        $namespace = substr($adapterClass, 0, strrpos($adapterClass, '\\'));
-        return $namespace . '\\Options\\' . $this->adapter->getName() . 'Options';
     }
 
     /**
@@ -252,8 +235,9 @@ class Conversion extends AbstractFilter
      */
     public function getOptions($option = null)
     {
-        $this->getAdapterOptions();
+        $this->getAdapterOptions(); // TODO: check that effectively options are set/not empty
         return is_null($option) ? $this->options : $this->options[$option];
+
     }
 
     /**
@@ -265,5 +249,32 @@ class Conversion extends AbstractFilter
             return $value;
         }
         return $this->getAdapter()->convert($value);
+    }
+
+    /**
+     * Get the full qualified class name of options class for the supplied adapter
+     *
+     * @param ConversionAlgorithmInterface|null $adapter
+     * @return string
+     * @throws Exception\InvalidArgumentException
+     */
+    public static function getAbstractOptionsFullQualifiedClassName($adapter)
+    {
+        if (!$adapter) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '"%s" unable to load adapter; adapter not found',
+                __METHOD__
+            ));
+        }
+        if (!$adapter instanceof ConversionAlgorithmInterface) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '"%s" expects a string or an instance of ConversionAlgorithmInterface; received "%s"',
+                __METHOD__,
+                is_object($adapter) ? get_class($adapter) : gettype($adapter)
+            ));
+        }
+        $adapterClass = get_class($adapter);
+        $namespace = substr($adapterClass, 0, strrpos($adapterClass, '\\'));
+        return $namespace . '\\Options\\' . $adapter->getName() . 'Options';
     }
 }

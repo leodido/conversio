@@ -8,6 +8,7 @@
  */
 namespace Conversio\Adapter;
 
+use Conversio\Conversion;
 use Conversio\Exception;
 use Conversio\ConversionAlgorithmInterface;
 use Zend\Stdlib\AbstractOptions;
@@ -30,6 +31,16 @@ abstract class AbstractOptionsEnabledAdapter implements ConversionAlgorithmInter
      */
     public function setOptions(AbstractOptions $options)
     {
+        $optionsClass = Conversion::getAbstractOptionsFullQualifiedClassName($this);
+        $inputOptionsClass = get_class($options);
+        if ($inputOptionsClass !== $optionsClass) {
+            throw new Exception\DomainException(sprintf(
+                '"%s" expects that options set are an array or a valid "%s" instance; received "%s"',
+                __METHOD__,
+                $optionsClass,
+                $inputOptionsClass
+            ));
+        }
         $this->options = $options;
 
         return $this;

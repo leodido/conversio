@@ -192,7 +192,7 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
             'options' => ['opt1' => 'O1', 'opt2' => 'O2'],
         ];
         $filter = new Conversion($onlyOpts);
-        $this->setExpectedException('Conversio\Exception\RuntimeException');
+        $this->setExpectedException('Conversio\Exception\InvalidArgumentException');
         $filter->getAdapterOptions();
     }
 
