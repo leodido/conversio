@@ -31,7 +31,7 @@ abstract class AbstractOptionsEnabledAdapter implements ConversionAlgorithmInter
      */
     public function setOptions(AbstractOptions $options)
     {
-        $optionsClass = Conversion::getAbstractOptionsFullQualifiedClassName($this);
+        $optionsClass = Conversion::getOptionsFullQualifiedClassName($this);
         $inputOptionsClass = get_class($options);
         if ($inputOptionsClass !== $optionsClass) {
             throw new Exception\DomainException(sprintf(
@@ -42,7 +42,6 @@ abstract class AbstractOptionsEnabledAdapter implements ConversionAlgorithmInter
             ));
         }
         $this->options = $options;
-
         return $this;
     }
 
@@ -59,7 +58,6 @@ abstract class AbstractOptionsEnabledAdapter implements ConversionAlgorithmInter
                 get_class($this)
             ));
         }
-
         return $this->options;
     }
 }

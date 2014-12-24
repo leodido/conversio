@@ -108,7 +108,6 @@ class AbstractOptionsMap extends AbstractOptions
                 )
             ));
         }
-
         $this->options[$key] = $value;
         return $this;
     }
