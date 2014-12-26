@@ -80,6 +80,12 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $ctor->invoke($this->mock, $input);
     }
 
+    public function testGetOptionsFQCNWithNotAConversionAlgorithmInterfaceShouldThrowInvalidArgumentException()
+    {
+        $this->setExpectedException('Conversio\Exception\InvalidArgumentException');
+        Conversion::getOptionsFullQualifiedClassName(new \stdClass());
+    }
+
     public function testGetAdapterNotSetShouldThrowRuntimeException()
     {
         $filter = new Conversion();
@@ -269,6 +275,11 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($filter->getOptions());
         $this->assertEquals($fakeAdapterOpts, $filter->getAdapterOptions());
         $this->assertEquals($fakeAdapterOpts->toArray(), $filter->getOptions());
+
+        $this->assertEquals($fakeAdapterOpts->getFake(), $filter->getOptions('fake'));
+
+        $this->setExpectedException('Conversio\Exception\RuntimeException');
+        $filter->getOptions('not_exists');
     }
 
     public function testSetAdapterOptionsWithInvalidTypeInputShouldThrowInvalidArgumentException()
@@ -286,15 +297,14 @@ class ConversionTest extends \PHPUnit_Framework_TestCase
         $filter->setAdapterOptions('invalid');
     }
 
-    public function testFilterNotString()
+    public function testFilter()
     {
+        // Filtering a non string return the non strig input
         $notAString = [];
         $filter = new Conversion();
         $this->assertEquals($notAString, $filter->filter($notAString));
-    }
 
-    public function testFilter()
-    {
+        // Filtering
         $input = 'string';
 
         $adapterMock = $this->getMock('Conversio\ConversionAlgorithmInterface');

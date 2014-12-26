@@ -277,11 +277,12 @@ class Conversion extends AbstractFilter
         }
         if (!$adapter instanceof ConversionAlgorithmInterface) {
             throw new Exception\InvalidArgumentException(sprintf(
-                '"%s" expects a string or an instance of ConversionAlgorithmInterface; received "%s"',
+                '"%s" expects an instance of ConversionAlgorithmInterface; received "%s"',
                 __METHOD__,
                 is_object($adapter) ? get_class($adapter) : gettype($adapter)
             ));
         }
+
         $adapterClass = get_class($adapter);
         $namespace = substr($adapterClass, 0, strrpos($adapterClass, '\\'));
         return $namespace . '\\Options\\' . $adapter->getName() . 'Options';
