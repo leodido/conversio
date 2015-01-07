@@ -13,9 +13,9 @@ use Zend\Stdlib\AbstractOptions;
 use Zend\Stdlib\ArrayUtils;
 
 /**
- * Class AbstractOptionsMap
+ * Class OptionsMap
  */
-class AbstractOptionsMap extends AbstractOptions
+class OptionsMap extends AbstractOptions
 {
     /**
      * Hash map containing options configuration: maps the option name to its allowed values
@@ -39,9 +39,8 @@ class AbstractOptionsMap extends AbstractOptions
     {
         if (!ArrayUtils::isHashTable($this->config, false)) {
             throw new Exception\DomainException(sprintf(
-                '"%s" expects that options map "%s" is an hash table',
-                __METHOD__,
-                '$map'
+                '"%s" expects that options map configuration property is an hash table',
+                __METHOD__
             ));
         }
         parent::__construct($options);
@@ -88,7 +87,7 @@ class AbstractOptionsMap extends AbstractOptions
         }
         if (!ArrayUtils::isList($this->config[$key], false)) {
             throw new Exception\DomainException(sprintf(
-                'Option "%s" is not a valid list of allowed values',
+                'Option "%s" does not have a list of allowed values',
                 $key
             ));
         }
