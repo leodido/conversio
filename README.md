@@ -18,7 +18,7 @@ Furthermore, adapters can have **options** too, in the form of a `Zend\Stdlib\Ab
 
 In this case your adapter can extend `AbstractOptionsEnabledAdapter` abstract class to take advantage of its options related methods.
 
-The `OptionsMap` class is an utility class aimed to create a option class starting from a configuration hash that describes the options (by name) and their admitted values.
+The `OptionsMap` class is an utility class aimed to create an option class starting from a configuration hash that describes the options (by name) and their admitted values.
 
 Installation
 ------------
