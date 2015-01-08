@@ -6,21 +6,21 @@
  * @copyright   Copyright (c) 2014, Leo Di Donato
  * @license     http://opensource.org/licenses/ISC      ISC license
  */
-namespace ConversioTest\TestAsset;
+namespace ConversioTest\TestAsset\Adapter;
 
-use Conversio\ConversionAlgorithmInterface;
+use Conversio\Adapter\AbstractOptionsEnabledAdapter;
 
 /**
- * Class ConvertNothing
+ * Class AdapterWithOptions
  */
-class ConvertNothing implements ConversionAlgorithmInterface
+class AdapterWithOptions extends AbstractOptionsEnabledAdapter
 {
     /**
      * {@inheritdoc}
      */
     public function convert($value)
     {
-        return '';
+        return null;
     }
 
     /**
@@ -28,6 +28,6 @@ class ConvertNothing implements ConversionAlgorithmInterface
      */
     public function getName()
     {
-        return 'ConvertNothing';
+        return 'AdapterWithOptions';
     }
 }

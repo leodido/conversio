@@ -9,14 +9,12 @@
 namespace Conversio;
 
 use Traversable;
+use Zend\Filter\AbstractFilter;
 use Zend\Stdlib\AbstractOptions;
 use Zend\Stdlib\ArrayUtils;
-use Zend\Filter\AbstractFilter;
 
 /**
- * Class Conversio
- *
- * @author leodido <leodidonato@gmail.com>
+ * Class Conversion
  */
 class Conversion extends AbstractFilter
 {
@@ -155,11 +153,12 @@ class Conversion extends AbstractFilter
             $this->adapterOptions = $optClass->setFromArray($this->adapterOptions);
             return $this->adapterOptions;
         }
-        if (get_class($this->adapterOptions) !== $this->getAbstractOptionsFullQualifiedClassName()) {
+        $wantedOptionsClass = self::getOptionsFullQualifiedClassName($this->adapter);
+        if (get_class($this->adapterOptions) !== $wantedOptionsClass) {
             throw new Exception\DomainException(sprintf(
                 '"%s" expects that options set are an array or a valid "%s" instance; received "%s"',
                 __METHOD__,
-                $this->getAbstractOptionsFullQualifiedClassName(),
+                $wantedOptionsClass,
                 get_class($this->adapterOptions)
             ));
         }
@@ -168,12 +167,15 @@ class Conversion extends AbstractFilter
     }
 
     /**
-     * TODO: Docs
+     * Instantiate and retrieve the options of the current adapter
+     *
+     * It also checks that an appropriate options class exists.
+     *
      * @return AbstractOptions
      */
     protected function getAbstractOptions()
     {
-        $optClass = $this->getAbstractOptionsFullQualifiedClassName();
+        $optClass = self::getOptionsFullQualifiedClassName($this->adapter);
         // Does the option class exist?
         if (!class_exists($optClass)) {
             throw new Exception\DomainException(
@@ -186,34 +188,14 @@ class Conversion extends AbstractFilter
         }
         $opts = new $optClass();
         if (!$opts instanceof AbstractOptions) {
-            throw new Exception\DomainException(
-                sprintf(
-                    '"%s" expects the options class to resolve to a valid "%s" instance; received "%s"',
-                    __METHOD__,
-                    'Zend\Stdlib\AbstractOptions',
-                    $optClass
-                )
-            );
-        }
-        return $opts;
-    }
-
-    /**
-     * TODO: Docs
-     * @return string
-     * @throws Exception\RuntimeException
-     */
-    protected function getAbstractOptionsFullQualifiedClassName()
-    {
-        if (!$this->adapter) {
-            throw new Exception\RuntimeException(sprintf(
-                '"%s" unable to load adapter; adapter not found',
-                __METHOD__
+            throw new Exception\DomainException(sprintf(
+                '"%s" expects the options class to resolve to a valid "%s" instance; received "%s"',
+                __METHOD__,
+                'Zend\Stdlib\AbstractOptions',
+                $optClass
             ));
         }
-        $adapterClass = get_class($this->adapter);
-        $namespace = substr($adapterClass, 0, strrpos($adapterClass, '\\'));
-        return $namespace . '\\Options\\' . $this->adapter->getName() . 'Options';
+        return $opts;
     }
 
     /**
@@ -248,12 +230,21 @@ class Conversion extends AbstractFilter
      * Get individual or all options from underlying adapter options object
      *
      * @param  string|null $option
-     * @return array|mixed|null
+     * @return mixed|array
      */
     public function getOptions($option = null)
     {
         $this->getAdapterOptions();
-        return is_null($option) ? $this->options : $this->options[$option];
+        if ($option !== null) {
+            if (!isset($this->options[$option])) {
+                throw new Exception\RuntimeException(sprintf(
+                    'Options "%s" not found',
+                    $option
+                ));
+            }
+            return $this->options[$option];
+        }
+        return $this->options;
     }
 
     /**
@@ -265,5 +256,33 @@ class Conversion extends AbstractFilter
             return $value;
         }
         return $this->getAdapter()->convert($value);
+    }
+
+    /**
+     * Recreate the full qualified class name of options class for the supplied adapter
+     *
+     * @param ConversionAlgorithmInterface|null $adapter
+     * @return string
+     * @throws Exception\InvalidArgumentException
+     */
+    public static function getOptionsFullQualifiedClassName($adapter)
+    {
+        if (!$adapter) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '"%s" unable to load adapter; adapter not found',
+                __METHOD__
+            ));
+        }
+        if (!$adapter instanceof ConversionAlgorithmInterface) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '"%s" expects an instance of ConversionAlgorithmInterface; received "%s"',
+                __METHOD__,
+                is_object($adapter) ? get_class($adapter) : gettype($adapter)
+            ));
+        }
+
+        $adapterClass = get_class($adapter);
+        $namespace = substr($adapterClass, 0, strrpos($adapterClass, '\\'));
+        return $namespace . '\\Options\\' . $adapter->getName() . 'Options';
     }
 }

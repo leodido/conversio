@@ -6,7 +6,7 @@
  * @copyright   Copyright (c) 2014, Leo Di Donato
  * @license     http://opensource.org/licenses/ISC      ISC license
  */
-namespace ConversioTest\TestAsset\Options;
+namespace ConversioTest\TestAsset\Adapter\Options;
 
 use Zend\Stdlib\AbstractOptions;
 

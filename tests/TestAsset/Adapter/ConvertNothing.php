@@ -6,20 +6,15 @@
  * @copyright   Copyright (c) 2014, Leo Di Donato
  * @license     http://opensource.org/licenses/ISC      ISC license
  */
-namespace ConversioTest\TestAsset;
+namespace ConversioTest\TestAsset\Adapter;
 
 use Conversio\ConversionAlgorithmInterface;
 
 /**
- * Class WrongAdapter
+ * Class ConvertNothing
  */
-class WrongAdapter implements ConversionAlgorithmInterface
+class ConvertNothing implements ConversionAlgorithmInterface
 {
-    /**
-     * @var WrongAdapterOptions
-     */
-    protected $options = null;
-
     /**
      * {@inheritdoc}
      */
@@ -33,16 +28,6 @@ class WrongAdapter implements ConversionAlgorithmInterface
      */
     public function getName()
     {
-        return 'WrongAdapter';
-    }
-
-    /**
-     * @param WrongAdapterOptions $options
-     * @return $this
-     */
-    public function setOptions(WrongAdapterOptions $options)
-    {
-        $this->options = $options;
-        return $this;
+        return 'ConvertNothing';
     }
 }

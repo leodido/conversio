@@ -11,12 +11,11 @@ namespace Conversio\Adapter\Options;
 use Conversio\Exception;
 use Zend\Stdlib\AbstractOptions;
 use Zend\Stdlib\ArrayUtils;
-use Zend\Stdlib\StringUtils;
 
 /**
- * Class AbstractOptionsMap
+ * Class OptionsMap
  */
-class AbstractOptionsMap extends AbstractOptions
+class OptionsMap extends AbstractOptions
 {
     /**
      * Hash map containing options configuration: maps the option name to its allowed values
@@ -40,9 +39,8 @@ class AbstractOptionsMap extends AbstractOptions
     {
         if (!ArrayUtils::isHashTable($this->config, false)) {
             throw new Exception\DomainException(sprintf(
-                '"%s" expects that options map "%s" is an hash table',
-                __METHOD__,
-                '$map'
+                '"%s" expects that options map configuration property is an hash table',
+                __METHOD__
             ));
         }
         parent::__construct($options);
@@ -57,10 +55,10 @@ class AbstractOptionsMap extends AbstractOptions
     }
 
     /**
-     * Abstract option setter with validation
+     * Option setter with validation
      * If option can have the specified value then it is set, otherwise this method throws exception
      *
-     * Tip: call it into your setters.
+     * Tip: call it into your setter methods.
      *
      * @param $key
      * @param $value
@@ -89,7 +87,7 @@ class AbstractOptionsMap extends AbstractOptions
         }
         if (!ArrayUtils::isList($this->config[$key], false)) {
             throw new Exception\DomainException(sprintf(
-                'Option "%s" is not a valid list of allowed values',
+                'Option "%s" does not have a list of allowed values',
                 $key
             ));
         }
@@ -109,8 +107,28 @@ class AbstractOptionsMap extends AbstractOptions
                 )
             ));
         }
-
         $this->options[$key] = $value;
         return $this;
+    }
+
+    /**
+     * Option getter with check
+     *
+     * Tip: call it into your getter methods.
+     *
+     * @param $key
+     * @return mixed
+     * @throws Exception\RuntimeException
+     */
+    protected function getOption($key)
+    {
+        if (!isset($this->options[$key])) {
+            throw new Exception\RuntimeException(sprintf(
+                'Option "%s" not found',
+                $key
+            ));
+        }
+
+        return $this->options[$key];
     }
 }
