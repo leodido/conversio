@@ -9,14 +9,12 @@
 namespace Conversio;
 
 use Traversable;
+use Zend\Filter\AbstractFilter;
 use Zend\Stdlib\AbstractOptions;
 use Zend\Stdlib\ArrayUtils;
-use Zend\Filter\AbstractFilter;
 
 /**
- * Class Conversio
- *
- * @author leodido <leodidonato@gmail.com>
+ * Class Conversion
  */
 class Conversion extends AbstractFilter
 {

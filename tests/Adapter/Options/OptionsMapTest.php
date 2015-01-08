@@ -11,10 +11,9 @@ namespace ConversioTest\Adapter\Options;
 use Conversio\Adapter\Options\OptionsMap;
 use Conversio\Exception\DomainException;
 use Conversio\Exception\InvalidArgumentException;
+use Conversio\Exception\RuntimeException;
 use ConversioTest\TestAsset\Adapter\Options\FakeOptionsMap;
-use ConversioTest\TestAsset\Adapter\Options\WrongAdapterOptions;
 use ConversioTest\TestAsset\Adapter\Options\WrongOptionsMap;
-use SebastianBergmann\Comparator\Factory;
 
 /**
  * Class OptionsMapTest
@@ -42,11 +41,11 @@ class OptionsMapTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetInvalidOptionsValueShouldThrowInvalidArgumentException()
     {
-        $optsMap = new FakeOptionsMap();
+        $optsMap = new FakeOptionsMap;
         $optsMap->setNumber('string');
     }
 
-    public function testSetOption()
+    public function testSettersAndGetters()
     {
         $optsMap = new FakeOptionsMap(['number' => 1, 'string' => '1']);
         $this->assertInstanceOf('ConversioTest\TestAsset\Adapter\Options\FakeOptionsMap', $optsMap);
@@ -56,7 +55,7 @@ class OptionsMapTest extends \PHPUnit_Framework_TestCase
 
     public function testToArray()
     {
-        $optsMap = new FakeOptionsMap();
+        $optsMap = new FakeOptionsMap;
         $this->assertEmpty($optsMap->toArray());
 
         $optsMap->setNumber(3);
@@ -71,8 +70,17 @@ class OptionsMapTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetNonExistentOptionShouldThrowDomainException()
     {
-        $optsMap = new WrongOptionsMap();
+        $optsMap = new WrongOptionsMap;
         $optsMap->setNotSet('try!');
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testGetNonExistentOptionShouldThrowRuntimeException()
+    {
+        $optsMap = new WrongOptionsMap;
+        $optsMap->getNotSet();
     }
 
     /**
@@ -80,7 +88,7 @@ class OptionsMapTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetNonListOptionsShouldThrowDomainException()
     {
-        $optsMap = new WrongOptionsMap();
+        $optsMap = new WrongOptionsMap;
         $optsMap->setString('value');
     }
 }

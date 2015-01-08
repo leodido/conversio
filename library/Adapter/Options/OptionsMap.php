@@ -55,10 +55,10 @@ class OptionsMap extends AbstractOptions
     }
 
     /**
-     * Abstract option setter with validation
+     * Option setter with validation
      * If option can have the specified value then it is set, otherwise this method throws exception
      *
-     * Tip: call it into your setters.
+     * Tip: call it into your setter methods.
      *
      * @param $key
      * @param $value
@@ -109,5 +109,26 @@ class OptionsMap extends AbstractOptions
         }
         $this->options[$key] = $value;
         return $this;
+    }
+
+    /**
+     * Option getter with check
+     *
+     * Tip: call it into your getter methods.
+     *
+     * @param $key
+     * @return mixed
+     * @throws Exception\RuntimeException
+     */
+    protected function getOption($key)
+    {
+        if (!isset($this->options[$key])) {
+            throw new Exception\RuntimeException(sprintf(
+                'Option "%s" not found',
+                $key
+            ));
+        }
+
+        return $this->options[$key];
     }
 }
