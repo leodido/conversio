@@ -13,7 +13,7 @@ Add `leodido/conversio` to your `composer.json`.
 ```json
 {
    "require": {
-       "leodido/conversio": "v0.1.1"
+       "leodido/conversio": "v0.2.0"
    }
 }
 ```
@@ -27,6 +27,8 @@ Converters
 ----------
 
 **WIP**
+
+- https://github.com/leodido/langcode-conv
 
 ---
 

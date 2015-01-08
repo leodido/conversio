@@ -35,7 +35,7 @@ class FakeOptionsMap extends OptionsMap
      */
     public function getNumber()
     {
-        return $this->options['number'];
+        return $this->getOption('number');
     }
 
     /**
@@ -53,6 +53,6 @@ class FakeOptionsMap extends OptionsMap
      */
     public function getString()
     {
-        return $this->options['string'];
+        return $this->getOption('string');
     }
 }

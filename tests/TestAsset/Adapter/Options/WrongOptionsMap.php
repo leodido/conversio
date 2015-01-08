@@ -35,7 +35,7 @@ class WrongOptionsMap extends OptionsMap
      */
     public function getNumber()
     {
-        return $this->options['number'];
+        return $this->getOption('number');
     }
 
     /**
@@ -53,7 +53,7 @@ class WrongOptionsMap extends OptionsMap
      */
     public function getNotSet()
     {
-        return $this->options['not_set'];
+        return $this->getOption('not_set');
     }
 
     /**
@@ -71,6 +71,6 @@ class WrongOptionsMap extends OptionsMap
      */
     public function getString()
     {
-        return $this->options['string'];
+        return $this->getOption('string');
     }
 }
