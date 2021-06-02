@@ -8,10 +8,10 @@
  */
 namespace Conversio;
 
+use Laminas\Filter\AbstractFilter;
+use Laminas\Stdlib\AbstractOptions;
+use Laminas\Stdlib\ArrayUtils;
 use Traversable;
-use Zend\Filter\AbstractFilter;
-use Zend\Stdlib\AbstractOptions;
-use Zend\Stdlib\ArrayUtils;
 
 /**
  * Class Conversion
@@ -215,7 +215,7 @@ class Conversion extends AbstractFilter
             ));
         }
         foreach ($options as $key => $value) {
-            if ($key == 'options') {
+            if ($key === 'options') {
                 $key = 'adapterOptions';
             }
             $method = 'set' . ucfirst($key);
