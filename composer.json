@@ -12,11 +12,7 @@
     ],
     "require": {
         "php": ">=5.4",
-        "zendframework/zend-filter": "~2.2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~4.2",
-        "satooshi/php-coveralls": "dev-master"
+        "laminas/laminas-filter": "2.*"
     },
     "autoload": {
         "psr-4": {

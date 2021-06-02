@@ -11,7 +11,7 @@ namespace Conversio\Adapter;
 use Conversio\Conversion;
 use Conversio\Exception;
 use Conversio\ConversionAlgorithmInterface;
-use Zend\Stdlib\AbstractOptions;
+use Laminas\Stdlib\AbstractOptions;
 
 /**
  * Class AbstractOptionsEnabledAdapter
