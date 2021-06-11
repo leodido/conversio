@@ -28,7 +28,7 @@ Add `leodido/conversio` to your `composer.json`.
 ```json
 {
    "require": {
-       "leodido/conversio": "v0.2.0"
+       "leodido/conversio": "v0.3.0"
    }
 }
 ```
